@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/ControladoraRaigX.Tests/ControladoraRaigX.Tests.csproj" />
+  </Folder>
+  <Project Path="ControladoraRaigX/ControladoraRaigX.csproj" />
+  <Project Path="MaquinaRaigX/MaquinaRaigX.csproj" />
+  <Project Path="PanellControlUI/PanellControlUI.csproj" />
+</Solution>
