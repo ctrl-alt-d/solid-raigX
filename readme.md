@@ -70,6 +70,12 @@ Cemtrent-nos en el text `SiTotEsCorrecteSAplicaLaRadiacio`, per construir aquest
 
 Utilitzarem [`NSubstitute`](https://nsubstitute.github.io/).
 
+## Tercera part (opcional)
+
+Fixem-nos que no s'han demanat testos per comprovar que la `ControladoraRaigX` fa bé els càlculs de la intensitat i el temps. Es deixa per al lector la possibilitat de fer els testos d'aquests càlculs o inclús de refactoritzar la Kata per tal d'extreure els càlculs a una classe `CalculadoraRaigX` que es pot testar per separat o no.
+
+## Ajuda:
+
 ### Instal·lació de NSubstitute
 
 Per fer el Mock de la `MaquinaRaigX` et caldran unes llibreries de `Mock`. Rt proposo usar `NSubstitute`.

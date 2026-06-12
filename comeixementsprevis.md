@@ -14,6 +14,35 @@ Des de la carpeta del projecte de tests:
 dotnet add tests/ControladoraRaigX.Tests package NSubstitute
 ```
 
+## Mock, com instruir un Mock per a que els seus mètodes retornin el que nosaltres volem
+
+Quan crees un mock amb `NSubstitute`, pots decidir què ha de retornar cada mètode amb `.Returns(...)`. Això et permet preparar l'escenari del test sense dependre d'una implementació real.
+
+La idea és:
+1. Crees el mock amb `Substitute.For<TInterficie>()`.
+2. Indiques el valor de retorn del mètode que t'interessa.
+3. Executes el codi que estàs testejant.
+
+Exemple mínim (diferent del projecte):
+
+Suposem una `IPassarelaMissatges` amb un mètode `ObteCreditsDisponibles()` i un servei `GestorCampanyes` que només pot enviar campanyes si hi ha crèdits.
+
+```csharp
+var passarela = Substitute.For<IPassarelaMissatges>();
+var gestor = new GestorCampanyes(passarela);
+
+// Instruïm el mock: quan es cridi ObteCreditsDisponibles, ha de retornar 25.
+passarela.ObteCreditsDisponibles().Returns(25);
+
+var esPotEnviar = await gestor.PotEnviarCampanya(CancellationToken.None);
+
+Assert.True(esPotEnviar);
+```
+
+També pots canviar l'escenari molt ràpid: si poses `passarela.ObteCreditsDisponibles().Returns(0)`, el mateix test et permet validar el cas en què no es pot enviar cap campanya.
+
+
+
 ## Mock espia, com comprovar si s'ha invocat un mètode
 
 Amb un `Spy` pots verificar si un mètode s'ha cridat. A `NSubstitute` es fa amb `Received()`.
@@ -75,7 +104,7 @@ public async Task SiTotEsCorrecteSAplicaLaRadiacio()
 {
     // Arrange
   var passarela = Substitute.For<IPassarelaMissatges>();
-  passarela.EstaDisponible().Returns(true);
+  passarela.ComprovaTotsElsSistemesActius().Returns(true);
 
   var gestor = new GestorNotificacions(passarela);
 
