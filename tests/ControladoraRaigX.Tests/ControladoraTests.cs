@@ -81,17 +81,20 @@ public class ControladoraTests
     [Fact]
     public async Task NoEsPotSuperarElLlindarDeDurada()
     {
-                // arrange
+        // arrange
         var maquina = Substitute.For<IMaquina>();
         maquina.ComprovaTotsElsSistemesActius().Returns(true);
         var controladora = new Controladora(maquina);
 
         // act
-        await controladora.AplicaRadiació(80, 180, CancellationToken.None);
+        await controladora.AplicaRadiació(5000, 300, CancellationToken.None);
 
         // assert
         // La controladora ha d'haver demanat a la màquina que emeti radiació
-        await maquina.Received(1).AplicaRadiació(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
+        await maquina.Received(1).AplicaRadiació(
+            intensitat: Arg.Any<int>(),
+            milisegons: Arg.Is<int>(x => x <= Controladora.MAXDURADA),
+            cancellationToken: Arg.Any<CancellationToken>());
     }
 }
 
