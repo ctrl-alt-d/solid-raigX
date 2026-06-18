@@ -55,15 +55,43 @@ public class ControladoraTests
         await maquina.Received(0).AplicaRadiació(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
-    [Fact]
-    public async Task SiElsParametresNoSónValidsLLançaUnaExcepcio()
+    [Theory]
+    [InlineData(80, -1)]
+    [InlineData(-1, 180)]
+    [InlineData(-1, -1)]
+    [InlineData(80, 0)]
+    [InlineData(0, 180)]
+    [InlineData(0, 0)]
+    public async Task SiElsParametresNoSónValidsLLançaUnaExcepcio(int pes, int alçada)
     {
-        
+        // arrange
+        var maquina = Substitute.For<IMaquina>();
+        maquina.ComprovaTotsElsSistemesActius().Returns(true);
+        var controladora = new Controladora(maquina);
+
+        // act: No podem invocar en aquest moment `controladora.AplicaRadiació` perquè esperem que llenci una excepció
+        //      i precissament el que volem és comprovar que l'execpció es llença.
+        //      Fem servir una funció lambda per descriure l'acció a executar.
+        var action = async () => await controladora.AplicaRadiació(pes, alçada, CancellationToken.None);
+
+        // Assert llença excepció
+        await action.Should().ThrowAsync<ParametresNoValidsException>( "el pes o l'alçada no poden ser 0 o menors que 0" );
     }
 
     [Fact]
     public async Task NoEsPotSuperarElLlindarDeDurada()
     {
+                // arrange
+        var maquina = Substitute.For<IMaquina>();
+        maquina.ComprovaTotsElsSistemesActius().Returns(true);
+        var controladora = new Controladora(maquina);
+
+        // act
+        await controladora.AplicaRadiació(80, 180, CancellationToken.None);
+
+        // assert
+        // La controladora ha d'haver demanat a la màquina que emeti radiació
+        await maquina.Received(1).AplicaRadiació(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 }
 

@@ -5,6 +5,8 @@ namespace ControladoraRaigX;
 
 public class Controladora(IMaquina maquina)
 {
+    public const int MAXDURADA = 5000;
+
     public async Task AplicaRadiació(int pes, int alcada, CancellationToken cancellationToken)
     {
         if (!maquina.ComprovaTotsElsSistemesActius())
@@ -18,7 +20,7 @@ public class Controladora(IMaquina maquina)
         }
 
         int intensitat = pes * 10 + alcada;
-        int durada = Math.Max(5000, alcada * 20);
+        int durada = Math.Max(MAXDURADA, alcada * 20);
 
         await maquina.AplicaRadiació(intensitat, durada, cancellationToken);
     }
