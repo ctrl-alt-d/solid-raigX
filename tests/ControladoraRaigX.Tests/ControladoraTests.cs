@@ -45,12 +45,14 @@ public class ControladoraTests
         //      Fem servir una funció lambda per descriure l'acció a executar.
         var action = async () => await controladora.AplicaRadiació(80, 180, CancellationToken.None);
 
-        // Assert amb `Assert`
+        // Assert llença excepció amb `Assert`
         await Assert.ThrowsAsync<MaquinaNoOkException>(action);
 
-        // Assert amb `FluentAssertions` Quin us agrada més?
+        // Assert llença excepció amb `FluentAssertions` Quin us agrada més?
         await action.Should().ThrowAsync<MaquinaNoOkException>();
-        
+
+        // Assert comprovem que no ha emès radiació (.Received(0) és l'spy de l'NSubstitute ):
+        await maquina.Received(0).AplicaRadiació(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
