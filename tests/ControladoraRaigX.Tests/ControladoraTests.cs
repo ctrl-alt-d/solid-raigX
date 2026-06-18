@@ -1,4 +1,6 @@
-﻿using MaquinaRaigX;
+﻿using ControladoraRaigX.Exceptions;
+using FluentAssertions;
+using MaquinaRaigX;
 using NSubstitute;
 
 namespace ControladoraRaigX.Tests;
@@ -34,12 +36,21 @@ public class ControladoraTests
     public async Task SiLaMaquinaNoEstaOkLaControladoraLLançaUnaExcepcioInoAplicaRadiació()
     {
         // arrange
+        var maquina = Substitute.For<IMaquina>();
+        maquina.ComprovaTotsElsSistemesActius().Returns(false);
+        var controladora = new Controladora(maquina);
 
+        // act: No podem invocar en aquest moment `controladora.AplicaRadiació` perquè esperem que llenci una excepció
+        //      i precissament el que volem és comprovar que l'execpció es llença.
+        //      Fem servir una funció lambda per descriure l'acció a executar.
+        var action = async () => await controladora.AplicaRadiació(80, 180, CancellationToken.None);
 
-        // act
+        // Assert amb `Assert`
+        await Assert.ThrowsAsync<MaquinaNoOkException>(action);
 
-        //
-
+        // Assert amb `FluentAssertions` Quin us agrada més?
+        await action.Should().ThrowAsync<MaquinaNoOkException>();
+        
     }
 
     [Fact]
